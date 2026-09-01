@@ -1,0 +1,67 @@
+# ================= 全局配置 =================
+data:
+  # 数据源：synth（合成数据，默认，无真实数据时演示全流程）/ aistpp（真实 AIST++ 数据）
+  source: "synth"
+  root: "data_cache"
+  # 合成数据参数（模拟 AIST++ 24 子类舞蹈骨架序列）
+  synth:
+    n_joints: 24
+    channels: 3
+    n_frames: 64                    # 序列帧数（论文 T=128；CPU 演示取 64，保留 ≥2 个节拍周期）
+    samples_per_class: 50          # 每类样本数（训练+测试）
+    n_dancers: 40                  # 模拟舞者数（dancer-independent 划分）
+    train_ratio: 0.9               # 按舞者划分 90/10
+    noise: 0.015                   # 关节噪声
+    beat_jitter: 0.25              # 节拍偏移（相位抖动，周期比例）
+    freq_jitter: 0.2               # 频率个体差异
+    seed: 42
+  # AIST++ 真实数据（用户有数据时使用）
+  aistpp:
+    path: "AIST_DANCE/data"        # AIST++ 数据目录（需自行下载）
+    label_file: "fine_labels.csv"  # 24 细分类标注文件
+
+preprocess:
+  gaussian_sigma: 1.5              # 高斯滤波窗口（预处理第1步）
+  curv_beta: 0.1                   # 式(6) 曲率增强强度系数
+  curv_tau: 0.03                   # 式(6) 曲率激活阈值
+  curv_kappa: 0.01                 # 式(6) 曲率平滑系数（Sigmoid 过渡锐度）
+  align: true                      # 节拍对齐（式7/8，合成数据上启用）
+
+model:
+  num_classes: 24                  # 细粒度子类数
+  n_joints: 24
+  in_channels: 3                   # 骨骼坐标通道数
+  n_frames: 64
+  block_nums: [3, 3, 3]            # 9 层块（文章 9 层级联）
+  channels: [32, 64, 128]          # 网络通道数随深度递增（CPU 演示规模；论文 64→128→256）
+  dilations: [1, 1, 2, 1, 2, 4, 2, 4, 1]   # 时序膨胀率序列
+  tcn_kernel: 3                    # 时序卷积核大小
+  graph_tau: 0.2                   # 式(4) 图温度系数（网格搜索最优值）
+  adaptive_graph: true             # 自适应图学习分支（式2-4）
+  emb_dim: 256                     # 全局特征嵌入维度 D=256
+  dropout: 0.3
+
+loss:
+  proto_momentum: 0.99             # 式(9) 原型动量系数 m
+  proto_temp: 0.2                  # 式(10) 对比温度参数
+  hard_negatives: 3                # 式(10) 困难负样本数
+  lambda_proto: 1.0                # 式(11) 原型对比损失权重
+  lambda_reg: 0.001                # 式(11) Frobenius 拓扑正则权重
+  ce_weighted: true                # 加权交叉熵（类别频率）
+
+train:
+  epochs: 10
+  batch_size: 16
+  lr: 0.002                        # 初始学习率（网格 {1e-3,2e-3,5e-3} 中选取）
+  weight_decay: 0.00005            # 网格 {1e-5,5e-5,1e-4} 中选取
+  lr_decay_epochs: [4, 8]          # 两阶段学习率衰减（文章图5 阶段切换点）
+  warmup_epochs: 2
+  device: "auto"
+  seed: 42
+  log_every: 5
+
+eval:
+  cross_pairs: [[2, 3], [0, 1], [13, 14], [6, 7], [8, 9]]   # 易混淆子类对（Cross-Pair F1）
+  gsnr: true                       # 记录梯度信噪比（图5）
+
+outputs: "outputs"
