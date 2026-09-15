@@ -1,6 +1,3 @@
-"""合成舞蹈骨架数据生成器。
-
-在没有真实 AIST++ 数据的情况下，按论文描述模拟 24 个细粒度舞蹈子类的骨架序列：
   - 24 关节 × 3 通道 × 128 帧（60Hz 采样，时长约 2.1s）
   - 每类定义运动基元（主动关节组 + 运动模式 + 频率 + 幅度），类间差异聚焦末端关节
     微变形（腕/踝/髋），并刻意构造易混淆类对（如 Lock-Wrist-Twirl vs Waack-Arm-Swing）
@@ -14,7 +11,7 @@ import numpy as np
 
 from .topology import JOINT_NAMES, N_JOINTS, base_pose, normalize_unit_cube
 
-# 24 类运动基元定义（论文 Table 1 子类）
+# 24 类运动基元定义
 # 字段：主动关节组、运动模式、频率、幅度、主运动轴
 CLASS_DEFS = [
     # 0 Lock-Point: 双腕高频点动（脉冲）
