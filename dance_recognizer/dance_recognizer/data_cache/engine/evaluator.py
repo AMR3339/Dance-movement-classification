@@ -1,4 +1,4 @@
-"""评估器（论文 §3.4/4.x 五维指标体系）。
+"""评估器。
 
 - Top-1 Accuracy、Macro F1、Cross-Pair F1（易混淆子类对）
 - FDI（式12，Davies-Bouldin 风格）：FDI = (1/K) sum_i max_j (S_i+S_j)/d_ij
@@ -58,7 +58,7 @@ def fdi_index(emb, labels, K):
 
 
 def cluster_metrics(emb, labels):
-    """平均轮廓系数 / Davies-Bouldin / 平均类内距离（论文表5）。"""
+    """平均轮廓系数 / Davies-Bouldin / 平均类内距离。"""
     if len(set(labels.tolist())) < 2 or len(emb) < 3:
         return {"silhouette": float("nan"), "davies_bouldin": float("nan"),
                 "intra_class_dist": float("nan")}
