@@ -1,4 +1,4 @@
-"""AIST++ 真实数据加载器（备用：用户获取 AIST++ 数据后可直接使用）。
+"""AIST++ 真实数据加载器
 
 AIST++ 提供 (N, 24, 3) 每帧 3D 骨架（60Hz）。此处实现：
   - 从 `{path}` 读取原始骨架序列（npz/npy，字段 'smpl_poses' 或 'keypoints3d'）
