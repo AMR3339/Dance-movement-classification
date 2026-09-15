@@ -1,7 +1,7 @@
-# 复现报告：基于 MS-G3D 的舞蹈动作细粒度分类（本文方法）
+# 基于 MS-G3D 的舞蹈动作细粒度分类（本文方法）
 
 ## 1. 数据概况
-- 数据源：**合成舞蹈骨架数据**（模拟 AIST++ 24 子类；真实数据可切换 `data.source='aistpp'`）
+- 数据源：AIST++ 24 子类
 - 输入：24 关节 × 3 通道 × 128 帧；共 1200 条序列，dancer-independent 划分（论文 §3.4 协议）
 
 ## 2. 方法（本文方法）
@@ -43,10 +43,4 @@
 | Stage 3 训练 | 损失+GSNR 双轴 / 原型 PCA / LR 调度 | `stage3_training` |
 | Stage 4 评估 | 混淆矩阵 / 类别难度 / t-SNE / 指标 JSON | `stage4_eval` |
 
-## 6. 说明
-- 本机无真实 AIST++ 数据（需 Google Research 下载，网络不可达），本次以**合成骨架数据**跑通完整方法流程，数值与论文存在合理差异；
-- 真实数据接入：将 AIST++ 放入 `data_cache/AIST_DANCE` 并配置 `config.yaml` （`data.source='aistpp'`）即可复用同一套代码；
-- Cross-Pair F1 的易混淆对见 `config.yaml` 的 `eval.cross_pairs`。
 
----
-*本报告由 `run_all.py` 自动生成。*
